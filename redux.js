@@ -1,3 +1,6 @@
+import { Console } from "console";
+import deepFreeze from "deep-freeze";
+
 // first task
 const reducer = (state = 5) => {
     return state;
@@ -434,3 +437,261 @@ const wakeUp = () => {
 };
 
 const store = Redux.createStore(immutableReducer);
+
+
+
+
+
+
+
+
+// EGGHEAD PORTION
+// reducer test(vid 5)
+function counter(state, action) {
+  if (typeof state === 'undefined') {
+    return 0
+  }
+
+  if (action.type === 'INCREMENT') {
+    return state + 1;
+  } else if (action.type === 'DECREMENT') {
+    return state - 1;
+  } else {
+    return state;
+  }
+}
+
+OR
+
+
+const counter = (state = 0, action) => {
+  
+  switch(action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state;
+  }
+}
+
+expect(
+  counter(0, {type: 'INCREMENT'})
+).toEqual(1);
+
+
+expect(
+  counter(1, {type: 'INCREMENT'})
+).toEqual(2)
+
+
+expect(
+  counter(2, {type: 'DECREMENT'})
+).toEqual(1)
+
+
+expect(
+  counter(1, {type: 'DECREMENT'})
+).toEqual(0)
+
+expect(
+  counter(1, {type: 'DO SOMETHING'})
+).toEqual(1)
+
+
+expect(
+  counter(undefined, {})
+).toEqual(0)
+
+console.log('Tests Passed')
+
+
+
+
+// vid 6
+const counter = (state = 0, action) => {
+  
+  switch(action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state;
+  }
+}
+
+const {createStore} = Redux;
+or
+// var createStore = Redux.createStore;
+// import { createStore } from 'redux'
+
+const store = createStore(counter);
+
+// the code below won't render the initial state
+store.subscribe(() => {
+  document.body.innerText = store.getState();
+});
+
+document.addEventListener('click', () => {
+  store.dispatch({type: 'INCREMENT'})
+})
+
+
+// this includes the initial state, and recommended
+const render = () => {
+  document.body.innerText = store.getState();
+}
+store.subscribe(render)
+render()
+
+
+
+// 7th vid
+// the createStore
+const counter = (state = 0, action) => {
+  
+  switch(action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state;
+  }
+}
+
+const {createStore} = Redux;
+const createStore = (reducer) => {
+  let state;
+  let listeners = [];
+
+  const getState = () => state;
+
+  const dispatch = (action) => {
+   state = reducer(state, action);
+   listeners.forEach(listener => listener());
+  };
+
+  const subscribe = (listener) => {
+    listeners.push(listener);
+    return () => {
+      listeners = listeners.filter(l => l !==listener);
+    };
+  };
+ dispatch({})
+  return {getState, dispatch, subscribe};
+}
+
+
+
+// 8th vid
+// simple-react
+const counter = (state = 0, action) => {
+  
+  switch(action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state;
+  }
+}
+
+const Counter = ({value, onIncrement, onDecrement}) => (
+  <div>
+      <h1>
+        {value}
+      </h1>
+      <button onClick={onIncrement}>+</button>
+      <button onClick={onDecrement}>-</button>
+  </div>
+)
+
+const {createStore} = Redux;
+const store = createStore(counter);
+
+
+const render = () => {
+  ReactDOM.createRoot(document.getElementById('root')).render(<Counter value={store.getState()}
+  onIncrement={() => store.dispatch({type: 'INCREMENT'})}
+  onDecrement={() => store.dispatch({type: 'DECREMENT'})}
+  />)
+}
+
+store.subscribe(render)
+render();
+
+
+
+
+// 9TH vid
+// array mutation with concat, slice nand spread
+const adCounter = (list) => {
+  //  list.push(0);
+  return list.concat([0])
+  or
+  
+   return [...list, 0];
+};
+const testAddCounter = () => {
+  const listBefore = [];
+  const listAfter = [0]
+
+deepFreeze(listBefor)
+  expect(
+    addCounter(listBefore) 
+    ).toEqual(listAfter)
+};
+testAddCounter();
+console.log('All tests Passed')
+
+
+
+
+const removeCounter = (list, index) => {
+ return list.slice(0, index).concat(list.slice(index + 1))
+  or
+  return [...list.slice(0, index), ...list.slice(index + 1)]
+}
+const testRemoveCounter = () => { 
+  const listBefore = [0, 10, 20]
+  const listAfter = [0, 20]
+
+
+  deepFreeze(listBefore)
+  expect(
+    removeCounter(listBefore, 1)
+  ).toEqual(listAfter)
+}
+testRemoveCounter()
+
+
+
+
+const incrementCounter = (list, index) => {
+   return list.slice(0, index).concat([list[index] + 1]).concat(list.slice(index + 1))
+
+   or  
+
+   return
+
+   [...list.slice(0, index), list[index] + 1, ...list.slice(index + 1)]
+}
+const testIncrementCounter = () => {
+  const listBefore = [0, 10, 20];
+  const listAfetr = [0, 11, 20];
+
+  deepFreeze(listBefore)
+  expect(
+    incrementCounter(listBefore, 1)
+    ).toEqual(listAfetr)
+}
+incrementCounter()
+
+
+
+
+// 10th vid
